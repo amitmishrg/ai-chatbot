@@ -15,7 +15,7 @@
 // import { appendResponseMessages, type UIMessage } from 'ai';
 
 // config({
-//   path: '.env.local',
+//   path: '.env',
 // });
 
 // if (!process.env.POSTGRES_URL) {

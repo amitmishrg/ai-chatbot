@@ -90,11 +90,14 @@ export function createDocumentHandler<T extends ArtifactKind>(config: {
 /*
  * Use this array to define the document handlers for each artifact kind.
  */
+import { htmlDocumentHandler } from '@/artifacts/html/server';
+
 export const documentHandlersByArtifactKind: Array<DocumentHandler> = [
   textDocumentHandler,
   codeDocumentHandler,
   imageDocumentHandler,
   sheetDocumentHandler,
+  htmlDocumentHandler,
 ];
 
-export const artifactKinds = ['text', 'code', 'image', 'sheet'] as const;
+export const artifactKinds = ['text', 'code', 'image', 'sheet', 'html'] as const;

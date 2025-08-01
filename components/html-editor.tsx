@@ -2,11 +2,76 @@
 
 import { EditorView } from '@codemirror/view';
 import { EditorState, Transaction } from '@codemirror/state';
-import { python } from '@codemirror/lang-python';
-import { oneDark } from '@codemirror/theme-one-dark';
+import { html } from '@codemirror/lang-html';
 import { basicSetup } from 'codemirror';
 import React, { memo, useEffect, useRef } from 'react';
 import { Suggestion } from '@/lib/db/schema';
+
+// Custom bright theme for better visibility
+const brightTheme = {
+  '&': {
+    backgroundColor: '#ffffff',
+    color: '#1a1a1a',
+  },
+  '.cm-content': {
+    caretColor: '#1a1a1a',
+  },
+  '.cm-cursor, .cm-dropCursor': {
+    borderLeftColor: '#1a1a1a',
+  },
+  '&.cm-focused .cm-selectionBackground, .cm-selectionBackground, .cm-content ::selection': {
+    backgroundColor: '#b3d4fc',
+  },
+  '.cm-panels': {
+    backgroundColor: '#f5f5f5',
+    color: '#1a1a1a',
+  },
+  '.cm-panels.cm-panels-top': {
+    borderBottom: '1px solid #ddd',
+  },
+  '.cm-panels.cm-panels-bottom': {
+    borderTop: '1px solid #ddd',
+  },
+  '.cm-searchMatch': {
+    backgroundColor: '#ffff0054',
+  },
+  '.cm-searchMatch.cm-searchMatch-selected': {
+    backgroundColor: '#ff6a6a',
+  },
+  '.cm-activeLine': {
+    backgroundColor: '#f0f0f0',
+  },
+  '.cm-selectionMatch': {
+    backgroundColor: '#aafe661a',
+  },
+  '&.cm-focused .cm-matchingBracket, &.cm-focused .cm-nonmatchingBracket': {
+    color: '#1a1a1a',
+    outline: '1px solid #1a1a1a',
+  },
+  '.cm-gutters': {
+    backgroundColor: '#f5f5f5',
+    color: '#6a6a6a',
+    border: 'none',
+  },
+  '.cm-activeLineGutter': {
+    backgroundColor: '#e0e0e0',
+  },
+  '.cm-foldPlaceholder': {
+    backgroundColor: 'transparent',
+    border: 'none',
+    color: '#888',
+  },
+  '.cm-tooltip': {
+    border: '1px solid #ddd',
+    backgroundColor: '#f5f5f5',
+  },
+  '.cm-tooltip.cm-tooltip-autocomplete': {
+    '& > ul > li[aria-selected]': {
+      backgroundColor: '#b3d4fc',
+      color: '#1a1a1a',
+    },
+  },
+};
 
 type EditorProps = {
   content: string;
@@ -17,7 +82,7 @@ type EditorProps = {
   suggestions: Array<Suggestion>;
 };
 
-function PureCodeEditor({ content, onSaveContent, status }: EditorProps) {
+function PureHtmlEditor({ content, onSaveContent, status }: EditorProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const editorRef = useRef<EditorView | null>(null);
 
@@ -25,7 +90,7 @@ function PureCodeEditor({ content, onSaveContent, status }: EditorProps) {
     if (containerRef.current && !editorRef.current) {
       const startState = EditorState.create({
         doc: content,
-        extensions: [basicSetup, python(), oneDark],
+        extensions: [basicSetup, html(), EditorView.theme(brightTheme)],
       });
 
       editorRef.current = new EditorView({
@@ -63,7 +128,7 @@ function PureCodeEditor({ content, onSaveContent, status }: EditorProps) {
 
       const newState = EditorState.create({
         doc: editorRef.current.state.doc,
-        extensions: [basicSetup, python(), oneDark, updateListener],
+        extensions: [basicSetup, html(), EditorView.theme(brightTheme), updateListener],
         selection: currentSelection,
       });
 
@@ -98,16 +163,4 @@ function PureCodeEditor({ content, onSaveContent, status }: EditorProps) {
   );
 }
 
-function areEqual(prevProps: EditorProps, nextProps: EditorProps) {
-  if (prevProps.suggestions !== nextProps.suggestions) return false;
-  if (prevProps.currentVersionIndex !== nextProps.currentVersionIndex)
-    return false;
-  if (prevProps.isCurrentVersion !== nextProps.isCurrentVersion) return false;
-  if (prevProps.status === 'streaming' && nextProps.status === 'streaming')
-    return false;
-  if (prevProps.content !== nextProps.content) return false;
-
-  return true;
-}
-
-export const CodeEditor = memo(PureCodeEditor, areEqual);
+export const HtmlEditor = memo(PureHtmlEditor); 

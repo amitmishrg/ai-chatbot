@@ -21,6 +21,7 @@ import { useArtifact } from '@/hooks/use-artifact';
 import equal from 'fast-deep-equal';
 import { SpreadsheetEditor } from './sheet-editor';
 import { ImageEditor } from './image-editor';
+import { HtmlEditor } from './html-editor';
 
 interface DocumentPreviewProps {
   isReadonly: boolean;
@@ -241,7 +242,7 @@ const DocumentContent = ({ document }: { document: Document }) => {
     'h-[257px] overflow-y-scroll border rounded-b-2xl dark:bg-muted border-t-0 dark:border-zinc-700',
     {
       'p-4 sm:px-14 sm:py-16': document.kind === 'text',
-      'p-0': document.kind === 'code',
+      'p-0': document.kind === 'code' || document.kind === 'html',
     },
   );
 
@@ -259,7 +260,7 @@ const DocumentContent = ({ document }: { document: Document }) => {
       {document.kind === 'text' ? (
         <Editor {...commonProps} onSaveContent={() => {}} />
       ) : document.kind === 'code' ? (
-        <div className="flex flex-1 relative w-full">
+        <div className="flex flex-1 relative w-full min-h-full">
           <div className="absolute inset-0">
             <CodeEditor {...commonProps} onSaveContent={() => {}} />
           </div>
@@ -279,6 +280,12 @@ const DocumentContent = ({ document }: { document: Document }) => {
           status={artifact.status}
           isInline={true}
         />
+      ) : document.kind === 'html' ? (
+        <div className="flex flex-1 relative w-full min-h-full">
+          <div className="absolute inset-0">
+            <HtmlEditor {...commonProps} onSaveContent={() => {}} />
+          </div>
+        </div>
       ) : null}
     </div>
   );
